@@ -1,0 +1,48 @@
+import requests
+
+# Define stocks using tuples
+stocks = [
+    ("AAPL", "Apple Inc"),
+    ("NVDA", "NVIDIA Corporation"),
+    ("T", "AT&T"),
+    ("DIA", "SPDR Dow Jones Industrial Average ETF Trust"),
+    ("MSFT", "Microsoft Corporation")
+]
+
+# Your Alpha Vantage API key
+api_key = "D8FMDS8ZEUOYTK5A"
+
+# Function to get the current stock price
+def get_stock_price(symbol):
+    # API endpoint with the stock symbol and API key
+    url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey={api_key}"
+    
+    # Send a GET request to the API
+    response = requests.get(url)
+    
+    # Parse the JSON response
+    data = response.json()
+    
+    # Check if the response contains the 'Global Quote' data
+    if "Global Quote" in data and "05. price" in data["Global Quote"]:
+        # Return the stock price
+        return data["Global Quote"]["05. price"]
+    else:
+        # Return None if the data is not available
+        return None
+
+# Loop through each stock in the stocks list
+for stock in stocks:
+    # Unpack the tuple into symbol and name
+    symbol, name = stock
+    
+    # Get the stock price using the symbol
+    price = get_stock_price(symbol)
+    
+    # Check if the price was successfully retrieved
+    if price:
+        # Print the stock price
+        print(f"The current price of {name} ({symbol}) is ${price}")
+    else:
+        # Print an error message if the price could not be retrieved
+        print(f"Failed to retrieve the price for {name} ({symbol})")
