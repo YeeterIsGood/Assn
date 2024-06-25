@@ -1,0 +1,53 @@
+import requests
+
+stocks = [
+    ("AAPL", "Apple Inc"),
+    ("NVDA", "NVIDIA Corporation"),
+    ("T", "AT&T"),
+    ("DIA", "Dow Jones Industrial Average"),
+    ("MSFT", "Microsoft Corporation")
+]
+
+api_key = "QDTX8RVNDYNXRD6M"
+
+def fetch_data(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        return None
+
+def get_current_price(symbol):
+    url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey={api_key}"
+    data = fetch_data(url)
+    if data:
+        return data.get("Global Quote", {}).get("05. price")
+    return None
+
+def get_previous_day_price(symbol):
+    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}"
+    data = fetch_data(url)
+    if data:
+        time_series = data.get("Time Series (Daily)", {})
+        dates = sorted(time_series.keys(), reverse=True)
+        if len(dates) >= 2:
+            return time_series[dates[1]]["4. close"]
+    return None
+
+for symbol, name in stocks:
+    current_price = get_current_price(symbol)
+    previous_day_price = get_previous_day_price(symbol)
+
+    if current_price:
+        print(f"The current price of {name} ({symbol}) is ${current_price}")
+    else:
+        print(f"Failed to retrieve the current price for {name} ({symbol})")
+
+    if previous_day_price:
+        print(f"The closing price of {name} ({symbol}) on the previous trading day was ${previous_day_price}")
+
+else:
+  print(f"Failed to retrieve the previous day's price for {name} ({symbol})")
+
