@@ -1,0 +1,46 @@
+from pybricks.hubs import PrimeHub
+from pybricks.pupdevices import Motor
+from pybricks.parameters import Direction, Port, Stop
+from pybricks.robotics import DriveBase
+
+hub = PrimeHub()
+
+left_motor = Motor(Port.A, Direction.COUNTERCLOCKWISE)
+right_motor = Motor(Port.B)
+c_motor = Motor(Port.C)
+d_motor = Motor(Port.D)
+
+drive_base = DriveBase(left_motor, right_motor, wheel_diameter=56, axle_track=79)
+drive_base.use_gyro(True)
+c_motor.control.limits(speed=2000)
+d_motor.control.limits(speed=2000)
+
+def drive_straight(distance_mm, speed_mmps):
+    drive_base.settings(straight_speed=speed_mmps)
+    drive_base.straight(distance_mm, then=Stop.HOLD)
+
+def drive_turn(angle_deg, turn_rate_degps):
+    drive_base.settings(turn_rate=turn_rate_degps)
+    drive_base.turn(angle_deg, then=Stop.HOLD)
+
+def drive_curve(angle, radius_mm, speed_mmps):
+    drive_base.settings(straight_speed=speed_mmps)
+    drive_base.curve(radius_mm, angle, then=Stop.HOLD)
+
+c_motor.run_angle(300,-100)
+drive_straight(350, 300)
+c_motor.run_angle(2000,300)
+c_motor.run_angle(400, -200)
+c_motor.run_angle(2000, 300)
+c_motor.run_angle(400, -200)
+c_motor.run_angle(2000, 300)
+c_motor.run_angle(400, -200)
+c_motor.run_angle(2000, 300)
+drive_turn(-40,150)
+drive_straight(250,200)
+drive_turn(50, 100)
+drive_straight(90, 100)
+drive_turn(40, 200)
+drive_turn(-150, 150)
+c_motor.run_angle(400, -200)
+drive_straight(-300, 300)
